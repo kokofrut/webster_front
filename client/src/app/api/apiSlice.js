@@ -3,7 +3,7 @@ import { setCredentials, logOut } from '../../features/auth/authSlice';
 
 const baseQuery = fetchBaseQuery({
 	// baseUrl: process.env.REACT_APP_API_URL,
-	baseUrl: import.meta.env.VITE_REACT_APP_API_URL,
+	// baseUrl: import.meta.env.VITE_REACT_APP_API_URL,
 	credentials: 'include',
 	prepareHeaders: (headers, { getState }) => {
 		const token = getState().auth.token;
