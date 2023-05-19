@@ -77,8 +77,8 @@ function Landing() {
         <p ref={refText2} className="text-s3">Apply different filters!</p>
         <Box ref={refPresetsContainer} className="presets-container">
           <Box className="presets-slider">
-            <img src={'kira_carousel.png'} id="carousel-img-1" />
-            <img src={'kira_carousel.png'} id="carousel-img-2" />
+            <img src={'kira_carousel.webp'} id="carousel-img-1" />
+            <img src={'kira_carousel.webp'} id="carousel-img-2" />
           </Box>
         </Box>
         <Box className="btn-test-it-wr" >
