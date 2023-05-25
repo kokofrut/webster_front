@@ -46,6 +46,18 @@ function PresetsList() {
 				finetunesProps: { brightness: 0.55 },
 			},
 		},
+		{
+			title: 'Black&White',
+			opts: {
+				filter: 'BlackAndWhite',
+			},
+		},
+		{
+			title: 'Orignal',
+			opts: {
+				filter: null,
+			},
+		},
 
 		{
 			title: 'Sepia with Crop for Twitter',
