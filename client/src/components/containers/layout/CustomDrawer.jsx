@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import {
@@ -18,16 +19,24 @@ import {
 
 import '../../../App.scss';
 import UploadFileSharpIcon from '@mui/icons-material/UploadFileSharp';
-import PaidSharpIcon from '@mui/icons-material/PaidSharp';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
+import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
+import GetAppSharpIcon from '@mui/icons-material/GetAppSharp';
+import PublishSharpIcon from '@mui/icons-material/PublishSharp';
+import ShareSharpIcon from '@mui/icons-material/ShareSharp';
+import TelegramIcon from '@mui/icons-material/Telegram';
 
 import {
 	setImageData,
 	setEditorState,
+	setShareImage,
 	selectShowEditor,
 } from '../../../features/image/imageSlice';
 
-import { setPresetsListState } from '../../../features/preset/presetSlice';
+import {
+	setCreatePreset,
+	setPresetsListState,
+} from '../../../features/preset/presetSlice';
 
 const drawerWidth = 180;
 function CustomDrawer() {
@@ -48,6 +57,7 @@ function CustomDrawer() {
 
 		input.onchange = () => {
 			const files = Array.from(input.files);
+			// dispatch(setImageFile(files[0]));
 			imageName = files[0].name.split('.')[0];
 			imageType = files[0].type.split('/')[1];
 			dispatch(setEditorState(false));
@@ -63,6 +73,23 @@ function CustomDrawer() {
 			reader.readAsDataURL(files[0]);
 		};
 		input.click();
+	};
+
+	const handleClose = () => {
+		setOpenShare(false);
+	};
+	const handleBot = () => {
+		const telegramBotUrl = "https://t.me/DiveDesignBot";
+
+		// Redirect the user to the Telegram bot URL.
+		window.location.href = telegramBotUrl;
+	}
+	const handleShare = () => {
+		dispatch(setShareImage(true));
+	};
+
+	const handleCreate = () => {
+		dispatch(setCreatePreset(true));
 	};
 
 	return (
@@ -81,16 +108,6 @@ function CustomDrawer() {
 			<Toolbar />
 			<Box sx={{ overflow: 'auto' }}>
 				<List>
-					{/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))} */}
 					<ListItem key="upload" disablePadding>
 						<ListItemButton onClick={handleFile}>
 							<ListItemIcon>
@@ -110,20 +127,48 @@ function CustomDrawer() {
 							<ListItemText primary={'Presets'} />
 						</ListItemButton>
 					</ListItem>
-					{/* <ListItem key="donation" disablePadding>
-						<ListItemButton
-							onClick={(e) => {
-								alert('You got fooled :)');
-							}}
-						>
+					<ListItem key="create-preset" disablePadding>
+						<ListItemButton disabled={!isEditorOpen} onClick={handleCreate}>
 							<ListItemIcon>
-								<PaidSharpIcon />
+								<AddCircleOutlineSharpIcon />
 							</ListItemIcon>
-							<ListItemText primary={'Donation'} />
+							<ListItemText primary={'Create Preset'} />
 						</ListItemButton>
-					</ListItem> */}
+					</ListItem>
+					<ListItem key="export-presets" disablePadding>
+						<ListItemButton disabled={!isEditorOpen}>
+							<ListItemIcon>
+								<PublishSharpIcon />
+							</ListItemIcon>
+							<ListItemText primary={'Export Presets'} />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key="import-preset" disablePadding>
+						<ListItemButton disabled={!isEditorOpen}>
+							<ListItemIcon>
+								<GetAppSharpIcon />
+							</ListItemIcon>
+							<ListItemText primary={'Import Presets'} />
+						</ListItemButton>
+					</ListItem>
 				</List>
 				<Divider />
+				<ListItem key="share" disablePadding>
+					<ListItemButton disabled={!isEditorOpen} onClick={handleShare}>
+						<ListItemIcon>
+							<ShareSharpIcon />
+						</ListItemIcon>
+						<ListItemText primary={'Share Image'} />
+					</ListItemButton>
+				</ListItem>
+				<ListItem key="bot" disablePadding>
+					<ListItemButton onClick={handleBot}>
+						<ListItemIcon>
+							<TelegramIcon />
+						</ListItemIcon>
+						<ListItemText primary={'Telegram Bot'} />
+					</ListItemButton>
+				</ListItem>
 			</Box>
 		</Drawer>
 	);
