@@ -1,17 +1,19 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { motion, useInView, useAnimate, useScroll } from 'framer-motion'
-import { Box, Typography, Button, IconButton, Stack } from '@mui/material'
+import { Box, Typography, Button, IconButton, Stack, Icon } from '@mui/material'
 import { Facebook, Instagram, Telegram, Pinterest, Twitter } from '@mui/icons-material';
 import '../../../scss/landing.scss'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useNavigate } from 'react-router'
+import TelegramIcon from '@mui/icons-material/Telegram';
+import Footer from './Footer';
 
-function StrokeContainer({animate}) {
+function StrokeContainer({ animate }) {
   const refStroke = useRef(null)
   const invStroke = useInView(refStroke, { once: true });
   useEffect(() => {
     invStroke ?
-      animate("#layer2-2 path", {style: "animation: stroke 4s linear"}, {duration: 1})
+      animate("#layer2-2 path", { style: "animation: stroke 4s linear" }, { duration: 1 })
       : ""
   }, [invStroke])
   return (
@@ -30,22 +32,21 @@ function StrokeContainer({animate}) {
 }
 
 function Landing() {
-  const animref = useRef([])
-
   const refText1 = useRef(null);
-  const refIcons = useRef(null);
   const refText2 = useRef(null);
+  const refText3 = useRef(null);
   const refToTop = useRef(null);
   const refDashed = useRef(null);
+  const refBot = useRef(null);
   const refPresetsContainer = useRef(null)
   const invToTop = useInView(refToTop, { once: false });
   const invText = useInView(refText1, { once: true });
   const invText2 = useInView(refText2, { once: true });
-  const invicons = useInView(refIcons, { once: true });
+  const invText3 = useInView(refText3, { once: true });
   const invDashed = useInView(refDashed, { once: true })
-  const [stroke, setStroke] = useState("white");
   const [scope, animate] = useAnimate()
   const navigate = useNavigate()
+
   useEffect(() => {
     const duration = 0.24;
     const sequence = [
@@ -60,9 +61,19 @@ function Landing() {
     animate(".landing-button", { transform: 'translateY(0)', opacity: 1 }, { duration: 1.3 })
     animate(sequence);
   }, [invDashed])
+
   useEffect(() => {
     invToTop === false ? animate(".toTop", { opacity: 1, transform: 'translateY(0)' }, { duration: 0.5 }) : animate(".toTop", { opacity: 0, transform: 'translateY(400px)' }, { duration: 1 })
   }, [invToTop])
+
+  useEffect(() => {
+    const sequence = [
+      ['.text-s4', { opacity: 1 }, { duration: 2 }],
+      ['.text-s4', { transform: "translate(-100%, 120px)" }, { delay: 0, duration: 1.1 }],
+    ]
+    invText3 ? animate(sequence) : ''
+  }, [invText3])
+
   useEffect(() => {
     const sequence = [
       ['.text-s3', { transform: "translateY(0)", opacity: invText2 ? 1 : 0 }, { duration: 0.7 }],
@@ -72,14 +83,15 @@ function Landing() {
     ]
     invText2 ? animate(sequence) : ''
   }, [invText2])
+
   useEffect(() => {
     const sequence = [
-      ['.social-rectangle', { width: '30%', height: '60%', opacity: 1 }, { duration: 4, direction: 'reverse' }],
-      ['.social-rectangle', { width: '80%', height: '40%' }, { duration: 4, direction: 'reverse' }],
-      ['.social-rectangle', { width: '20%', height: '80%' }, { duration: 4, direction: 'reverse' }],
-      ['.social-rectangle', { width: '40%', height: '70%' }, { duration: 4, direction: 'reverse' }],
-      ['.social-rectangle', { width: '30%', height: '80%' }, { duration: 4, direction: 'reverse' }],
-      ['.social-rectangle', { width: '50%', height: '50%' }, { duration: 4, direction: 'reverse' }]
+      ['.social-rectangle', { width: '30%', height: '60%', opacity: 1 }, { duration: 1, delay: 1, direction: 'reverse' }],
+      ['.social-rectangle', { width: '80%', height: '40%' }, { duration: 1, delay: 0.5, direction: 'reverse' }],
+      ['.social-rectangle', { width: '20%', height: '80%' }, { duration: 1, delay: 0.7, direction: 'reverse' }],
+      ['.social-rectangle', { width: '40%', height: '70%' }, { duration: 1, delay: 1, direction: 'reverse' }],
+      ['.social-rectangle', { width: '30%', height: '80%' }, { duration: 1, delay: 0.9, direction: 'reverse' }],
+      ['.social-rectangle', { width: '50%', height: '50%' }, { duration: 1, delay: 1, direction: 'reverse' }]
     ];
     animate(sequence, { repeat: Infinity, repeatType: 'reverse' });
   }, [invDashed])
@@ -133,10 +145,38 @@ function Landing() {
       </Box>
       <Box className="landing section-fours" >
         <StrokeContainer animate={animate} />
-        <Box className="bot-text">
-          <p className="text-s4">Draw anything on top of images!</p>
+        <Box className="shine-text" ref={refText3}>
+          <p className="text-s4">Just draw!</p>
         </Box>
       </Box>
+      <Box className="landing section-fifth" >
+        <p>We also have Telegram bot</p>
+        <Box className="paperplane">
+          <div className="plane">
+            <div className="wingRight"></div>
+            <div className="wingLeft"></div>
+            <div className="bottom"></div>
+            <div className="top"></div>
+            <div className="middle"></div>
+          </div>
+        </Box>
+        <Box className="bot-wr" ref={refBot}>
+          <Box className="bot-container" >
+            <p className="bot-title">What can this bot do?</p>
+            <p className="bot-lower">Use this to quickly edit photos and create collages. Dive in and be with Dive.</p>
+          </Box>
+          <Box className="user-container">
+            <p className="user-title">Apply different filters! Just in a few clicks <span role="img" aria-label="male"> 👨‍🎨 </span><span role="img" aria-label="female"> 👩‍🎨 </span> </p>
+          </Box>
+          <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '10%'}}>
+            <p style={{ fontSize: '20px' }}>{"Interested? =>"}</p>
+            <IconButton className='bot-button' onClick={() => {window.location.href = "https://t.me/DiveDesignBot"}}>
+              <TelegramIcon />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
+      <Footer />
       <Box className="toTop" >
         <a href='#top-element'>
           <IconButton >
