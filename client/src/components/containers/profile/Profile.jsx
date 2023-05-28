@@ -1,52 +1,111 @@
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { CircularProgress } from '@mui/material/';
+import { useNavigate } from 'react-router';
+
+import {
+	useGetImagesQuery,
+	useGetImageQuery,
+} from '../../../features/image/imageApiSlice';
+import {
+	setImageData,
+	setEditorState,
+} from '../../../features/image/imageSlice';
 import useAuth from '../../../hooks/useAuth';
 
+import ShareModal from './ShareModal';
+import DeleteModal from './DeleteModal';
 import '../../../scss/profile.scss';
 
-function CarouselItem({ index, item, currentindex }) {
-	return (
-		<div
-			className="carousel-item"
-			key={index}
-			style={{ transform: `translate(-${currentindex * 100}%)` }}
-		>
-			<div
-				className="carousel-item-background"
-				style={{
-					backgroundImage: `url(${item.src})`,
-					backgroundSize: 'cover',
-					filter: `blur(${currentindex === index ? '7px' : '7px'})`,
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					width: '100%',
-					height: '100%',
-				}}
-			/>
-			<img
-				className="carousel-item-image"
-				src={item.src}
-				style={{
-					objectFit: 'contain',
-					position: 'relative',
-					zIndex: 2,
-					maxWidth: '100%',
-					maxHeight: '100%',
-				}}
-			/>
-			<div className="carousel-item-toolbar">
-				<div>
-					<p>Edit</p>
+function CarouselItem({ index, item, currentindex, id }) {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const [openShareModal, setOpenShareModal] = useState(false);
+	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+	const { data, isLoading } = useGetImageQuery(id);
+	let content = null;
+	console.log(data);
+
+	const handleEdit = () => {
+		dispatch(
+			setImageData({
+				imageSrc: data.source,
+				imageName: data.name.split('.')[0],
+				imageType: data.name.split('.')[1],
+			})
+		);
+		dispatch(setEditorState(true));
+		navigate('/editor');
+	};
+
+	if (!isLoading) {
+		content = (
+			<>
+				<ShareModal
+					open={openShareModal}
+					setOpen={setOpenShareModal}
+					imgSrc={data.source}
+				/>
+				<DeleteModal
+					open={openDeleteModal}
+					setOpen={setOpenDeleteModal}
+					imageId={data._id}
+				/>
+				<div
+					className="carousel-item"
+					key={index}
+					style={{ transform: `translate(-${currentindex * 100}%)` }}
+				>
+					<div
+						className="carousel-item-background"
+						style={{
+							// backgroundImage: `url(${item.src})`,
+							backgroundImage: `url(${data.source})`,
+							backgroundSize: 'cover',
+							filter: `blur(${currentindex === index ? '7px' : '7px'})`,
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							width: '100%',
+							height: '100%',
+						}}
+					/>
+					<img
+						className="carousel-item-image"
+						// src={item.src}
+						src={data.source}
+						style={{
+							objectFit: 'contain',
+							position: 'relative',
+							zIndex: 2,
+							maxWidth: '100%',
+							maxHeight: '100%',
+						}}
+					/>
+					<div className="carousel-item-toolbar">
+						<div onClick={handleEdit}>
+							<p>Edit</p>
+						</div>
+						<div onClick={() => setOpenShareModal(true)}>
+							<p>Share</p>
+						</div>
+						<div onClick={() => setOpenDeleteModal(true)}>
+							<p>Delete</p>
+						</div>
+					</div>
 				</div>
-				<div>
-					<p>Share</p>
-				</div>
-			</div>
-		</div>
-	);
+			</>
+		);
+	} else if (isLoading) {
+		content = <CircularProgress />;
+	}
+	return content;
 }
 
 function Carousel() {
+	const { id } = useAuth();
+	// const id = '646bcef97635da8db37561a7';
+	const [imagesIds, setImagesIds] = useState([]);
 	let data = [
 		{ src: 'https://picsum.photos/id/345/1920/1080/' },
 		{ src: 'https://picsum.photos/id/212/1920/1080' },
@@ -56,6 +115,18 @@ function Carousel() {
 	];
 	const [currentindex, setCurrentindex] = useState(0);
 
+	const { data: allImages, isSuccess } = useGetImagesQuery();
+
+	useEffect(() => {
+		if (isSuccess) {
+			allImages.map((item) => {
+				if (item.userId === id) {
+					setImagesIds((prev) => [...prev, item]);
+				}
+			});
+		}
+	}, [isSuccess, allImages]);
+
 	const handleDotClick = (index) => {
 		setCurrentindex(index);
 	};
@@ -63,17 +134,17 @@ function Carousel() {
 	return (
 		<div className="carousel-container">
 			<div className="dots-wr">
-				{data.map((item, index) => {
+				{imagesIds.map((item, index) => {
 					return (
 						<div
 							className={`dot ${currentindex === index ? 'active' : ''}`}
 							onClick={() => handleDotClick(index)}
-							key={index}
+							key={item._id}
 						/>
 					);
 				})}
 			</div>
-			{data.length === 0 ? (
+			{imagesIds.length === 0 ? (
 				<div
 					style={{
 						display: 'flex',
@@ -86,9 +157,11 @@ function Carousel() {
 				</div>
 			) : (
 				<div className="carousel-wr">
-					{data.map((item, index) => {
+					{imagesIds.map((item, index) => {
 						return (
 							<CarouselItem
+								key={item._id}
+								id={item._id}
 								item={item}
 								index={index}
 								currentindex={currentindex}
@@ -103,6 +176,7 @@ function Carousel() {
 
 function UserProfile() {
 	const { name, surname, email } = useAuth();
+
 	return (
 		<div className="profile-wr">
 			<div className="profile-data">

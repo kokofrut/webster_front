@@ -13,9 +13,7 @@ import PersistLogin from './components/containers/auth/PersistLogin';
 import UserProfile from './components/containers/profile/Profile';
 import Landing from './components/containers/landing/Landing';
 import RequireAuth from './components/containers/auth/RequireAuth';
-import { inject } from '@vercel/analytics';
- 
-inject();
+
 function App() {
 	return (
 		<ThemeProvider theme={theme}>

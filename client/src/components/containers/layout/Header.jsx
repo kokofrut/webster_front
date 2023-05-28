@@ -39,9 +39,14 @@ function Header() {
 		}
 	};
 
-	const handleNavigate = () => {
+	const handleNavigate = (path) => {
 		handleClose();
-		navigate('/profile');
+		navigate(path);
+	};
+
+	const handleNaviagteAuth = (hash) => {
+		navigate('/auth');
+		window.location.hash = hash;
 	};
 
 	return (
@@ -52,10 +57,6 @@ function Header() {
 			sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
 		>
 			<Toolbar sx={{ dipslay: 'flex', justifyContent: 'space-between' }}>
-				{/* <Typography variant="h6" noWrap component="div" sx={{cursor: 'pointer'}} onClick={()=>{navigate('/')}}>
-					Dive
-				
-				</Typography> */}
 				<img
 					onClick={() => {
 						navigate('/');
@@ -80,7 +81,12 @@ function Header() {
 								<MoreVertIcon />
 							</IconButton>
 							<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-								<MenuItem onClick={handleNavigate}>My Profile</MenuItem>
+								<MenuItem onClick={() => handleNavigate('/profile')}>
+									My Profile
+								</MenuItem>
+								<MenuItem onClick={() => handleNavigate('/editor')}>
+									Editor
+								</MenuItem>
 								<Divider />
 								<MenuItem onClick={handleLogout}>Logout</MenuItem>
 							</Menu>
@@ -95,7 +101,7 @@ function Header() {
 									alignItems: 'center',
 								}}
 								onClick={() => {
-									navigate('/auth#sign-in');
+									handleNaviagteAuth('#sign-in');
 								}}
 							>
 								Login
@@ -111,7 +117,7 @@ function Header() {
 									alignItems: 'center',
 								}}
 								onClick={() => {
-									navigate('/auth#sign-up');
+									handleNaviagteAuth('#sign-up');
 								}}
 							>
 								Sign Up
